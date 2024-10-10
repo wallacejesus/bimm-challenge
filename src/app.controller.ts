@@ -5,11 +5,9 @@ import { VehicleService } from './vehicle/vehicle.service';
 @Controller()
 export class AppController implements OnModuleInit {
   constructor(
-    private readonly appService: AppService,
-    private readonly vehicleService: VehicleService,
+    private readonly appService: AppService
   ) {}
   onModuleInit() {
-    this.vehicleService.updateDB();
   }
 
   @Get()

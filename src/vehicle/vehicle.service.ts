@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Vehicle } from './vehicle.entity';
+import { Vehicle, VehicleDocument } from './vehicle.entity';
 import { XMLParser } from 'fast-xml-parser';
-import { VehicleType } from './vehicle-type.entity';
+import { VehicleType } from '../vehicle-type/vehicle-type.entity';
 import { VehicleTypeService } from '../vehicle-type/vehicle-type.service';
 import { ResponseDTO } from '../dtos/response-dto.entity';
 import { VehicleMakesDTO } from '../dtos/vehicle-makes-dto.entity';
 import { DatabaseService } from '../database/database.service';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class VehicleService {
   constructor(
     private readonly vehicleTypeService: VehicleTypeService,
-    private readonly databaseService: DatabaseService<Vehicle>
+    private readonly databaseService: DatabaseService<Vehicle>,
+    @InjectModel(Vehicle.name) private vehicleModel: Model<VehicleDocument>,
   ) {}
   private xmlParser = new XMLParser();
   public async updateDB(): Promise<void> {
-    const vehicles = await this.produceJson()
+    const vehicles = await this.updateDatabase()
     this.databaseService.setCollection('vehicles', vehicles);
   }
 
@@ -36,7 +39,7 @@ export class VehicleService {
     } as ResponseDTO<VehicleMakesDTO>;
   }
 
-  public async produceJson(): Promise<Vehicle[]> {
+  public async updateDatabase(): Promise<Vehicle[]> {
     const result = await this.getAllMakes();
 
     const vehicles: Vehicle[] = [];
@@ -44,26 +47,36 @@ export class VehicleService {
       const responseVehicleTypes =
         await this.vehicleTypeService.getAllVehicleTypesPerMake(
           vehicle.Make_ID,
-        );
-      console.log(vehicle.Make_Name);
-      vehicles.push({
-        makeId: vehicle.Make_ID.toString(),
-        makeName: vehicle.Make_Name,
-        vehicleTypes: responseVehicleTypes
-        .Results
-        .filter(p => p?.VehicleTypeId !== undefined)
-        .map((p): VehicleType => {
-          return {
-            typeId: p.VehicleTypeId.toString(),
-            typeName: p.VehicleTypeName,
-          };
-        }),
-      });
+        )
+      await this.vehicleModel.updateOne(
+        {makeId: vehicle.Make_ID},
+        {
+          $set: {
+            makeId: vehicle.Make_ID.toString(),
+            makeName: vehicle.Make_Name,
+            vehicleTypes: responseVehicleTypes
+            .Results
+            .filter(p => p?.VehicleTypeId !== undefined)
+            .map((p): VehicleType => {
+              return {
+                typeId: p.VehicleTypeId.toString(),
+                typeName: p.VehicleTypeName,
+              };
+            }),
+          }
+        },
+        {upsert: true}
+      );
+      
     }
 
     return vehicles;
   }
-  public findAll() : Vehicle[]{
-    return this.databaseService.getCollection('vehicles');
+  public async findAll() : Promise<Vehicle[]>{
+    return await this.vehicleModel.find()
+  }
+
+  public async findById(makeId: string): Promise<Vehicle>{
+    return await this.vehicleModel.findOne({makeId});
   }
 }
