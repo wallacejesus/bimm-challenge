@@ -3,11 +3,10 @@ import { AppService } from './app.service';
 import { VehicleService } from './vehicle/vehicle.service';
 
 @Controller()
-export class AppController implements OnModuleInit{
+export class AppController implements OnModuleInit {
   constructor(
     private readonly appService: AppService,
-    private readonly vehicleService: VehicleService
-   
+    private readonly vehicleService: VehicleService,
   ) {}
   onModuleInit() {
     this.vehicleService.updateDB();
