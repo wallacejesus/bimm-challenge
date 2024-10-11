@@ -1,11 +1,11 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @ObjectType()
 @Schema()
 export class VehicleType {
   @Field(() => ID)
-  @Prop({require: true})
+  @Prop({ require: true })
   typeId: string;
   @Field(() => String)
   @Prop()

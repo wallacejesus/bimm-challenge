@@ -1,14 +1,9 @@
-import { Controller, Get, OnModuleInit } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { VehicleService } from './vehicle/vehicle.service';
 
 @Controller()
-export class AppController implements OnModuleInit {
-  constructor(
-    private readonly appService: AppService
-  ) {}
-  onModuleInit() {
-  }
+export class AppController {
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
