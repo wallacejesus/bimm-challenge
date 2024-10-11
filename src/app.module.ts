@@ -11,20 +11,21 @@ import { DatabaseService } from './database/database.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env'
+      envFilePath: '.env',
     }),
     VehicleModule,
     VehicleTypeModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql')
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URL ?? 'mongodb://localhost:27017/bimm-challenge')
+    MongooseModule.forRoot(
+      process.env.MONGODB_URL ?? 'mongodb://localhost:27017/bimm-challenge',
+    ),
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],

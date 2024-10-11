@@ -10,7 +10,7 @@ export class VehicleTypeService {
   public async getAllVehicleTypesPerMake(
     makeId: number,
   ): Promise<ResponseDTO<VehicleTypesDTO>> {
-   const result = await axios.get(
+    const result = await axios.get(
       `https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId/${makeId}?format=xml`,
       {
         params: {
@@ -18,7 +18,7 @@ export class VehicleTypeService {
         },
       },
     );
-    
+
     const response = this.xmlParser.parse(result.data)?.Response;
     return {
       ...response,
@@ -27,6 +27,5 @@ export class VehicleTypeService {
           ? response.Results.VehicleTypesForMakeIds
           : [response.Results.VehicleTypesForMakeIds],
     };
-    
   }
 }

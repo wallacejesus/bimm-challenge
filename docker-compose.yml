@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - ${PORT:-27017}:${PORT:-27017}
+    env_file:
+      - .env
+
+  nodejs:
+    image: node:20
+    working_dir: /var/app
+    volumes:
+      - .:/var/app
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    env_file:
+      - .env
+    command: ["npm", "run", "start"]
+    depends_on:
+      - mongo    

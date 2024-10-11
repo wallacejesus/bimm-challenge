@@ -7,9 +7,9 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const vehicle = app.get(VehicleService);
-  console.log('updating database...')
+  console.log('updating database...');
   vehicle.updateDatabase();
-  console.log('Database updated')
+  console.log('Database updated');
   await app.listen(3000);
 }
 bootstrap();

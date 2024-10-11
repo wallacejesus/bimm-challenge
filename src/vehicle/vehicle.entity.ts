@@ -6,10 +6,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema()
 export class Vehicle {
   @Field(() => ID)
-  @Prop({required: true})
+  @Prop({ required: true })
   makeId: string;
   @Field(() => String)
-  @Prop({required: true})
+  @Prop({ required: true })
   makeName: string;
   @Field(() => [VehicleType])
   @Prop()

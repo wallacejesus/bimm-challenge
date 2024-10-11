@@ -4,20 +4,26 @@ import { Vehicle, VehicleSchema } from './vehicle.entity';
 import { ResponseDTO } from '../dtos/response-dto.entity';
 import { VehicleMakesDTO } from '../dtos/vehicle-makes-dto.entity';
 import { VehicleTypeService } from '../vehicle-type/vehicle-type.service';
-import { DatabaseService } from '../database/database.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 describe('VehicleService', () => {
   let service: VehicleService;
-  beforeEach(async () => {
+  beforeAll(async () => {
+    const mongodb = MongoMemoryServer.create();
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        MongooseModule.forRoot(process.env.MONGODB_URL ?? 'mongodb://localhost:27017/bimm'),
-        MongooseModule.forFeature([{
-        name: Vehicle.name,
-        schema: VehicleSchema
-      }])],
-      providers: [VehicleService, VehicleTypeService, DatabaseService<Vehicle>],
+        MongooseModule.forRoot(
+          process.env.MONGODB_URL ?? (await mongodb).getUri(),
+        ),
+        MongooseModule.forFeature([
+          {
+            name: Vehicle.name,
+            schema: VehicleSchema,
+          },
+        ]),
+      ],
+      providers: [VehicleService, VehicleTypeService],
     }).compile();
 
     service = module.get<VehicleService>(VehicleService);
@@ -43,30 +49,14 @@ describe('VehicleService', () => {
     expect(result).toBeDefined();
   });
 
-  it('must produce and get a JSON with all makes and vehicle types ', async () => {
-    jest.spyOn(service, 'updateDatabase').mockResolvedValue([
-      {
-        makeId: '1',
-        makeName: 'Make test',
-        vehicleTypes: [
-          {
-            typeId: '1',
-            typeName: 'Type test',
-          },
-        ],
-      },
-    ]);
-    const vehicleMakes = await service.updateDatabase();
-    expect(vehicleMakes).toBeInstanceOf(Array<Vehicle>);
-  });
   it('must update database with json reading of xml', async () => {
-    jest.spyOn(service,'updateDB').mockResolvedValue();
-    const result = await service.updateDB();
+    jest.spyOn(service, 'updateDatabase').mockResolvedValue();
+    const result = await service.updateDatabase();
     expect(result).toBeUndefined();
   });
 
   it('must find all vehicle saved in datastore', async () => {
-    jest.spyOn(service,'findAll').mockResolvedValue([
+    jest.spyOn(service, 'findAll').mockResolvedValue([
       {
         makeId: '1',
         makeName: 'Make test',
@@ -82,19 +72,17 @@ describe('VehicleService', () => {
     expect(result[0].makeId).toBe('1');
   });
 
-  it('must find single vehicle by makeId', async() => {
-    jest.spyOn(service,'findById').mockResolvedValue(
-      {
-        makeId: '1',
-        makeName: 'Make test',
-        vehicleTypes: [
-          {
-            typeId: '1',
-            typeName: 'Type test',
-          },
-        ],
-      } as Vehicle
-    );
+  it('must find single vehicle by makeId', async () => {
+    jest.spyOn(service, 'findById').mockResolvedValue({
+      makeId: '1',
+      makeName: 'Make test',
+      vehicleTypes: [
+        {
+          typeId: '1',
+          typeName: 'Type test',
+        },
+      ],
+    } as Vehicle);
     const result = await service.findById('1');
     expect(result.makeId).toBe('1');
   });
