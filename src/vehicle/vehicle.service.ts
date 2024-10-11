@@ -59,7 +59,6 @@ export class VehicleService {
         { upsert: true },
       );
     }
-
   }
   public async findAll(): Promise<Vehicle[]> {
     return await this.vehicleModel.find();

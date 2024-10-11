@@ -7,7 +7,6 @@ import { VehicleTypeModule } from './vehicle-type/vehicle-type.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { DatabaseService } from './database/database.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
@@ -28,6 +27,6 @@ import { ConfigModule } from '@nestjs/config';
     ),
   ],
   controllers: [AppController],
-  providers: [AppService, DatabaseService],
+  providers: [AppService],
 })
 export class AppModule {}

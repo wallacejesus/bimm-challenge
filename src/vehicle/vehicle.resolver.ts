@@ -10,7 +10,7 @@ export class VehicleResolver {
     return this.vehicleService.findAll();
   }
   @Query(() => Vehicle, { name: 'vehicle' })
-  async findById(@Args('makeId') makeId: string): Promise<Vehicle> {
+  findById(@Args('makeId') makeId: string): Promise<Vehicle> {
     return this.vehicleService.findById(makeId);
   }
 }

@@ -10,11 +10,11 @@ describe('VehicleResolver', () => {
   let resolver: VehicleResolver;
 
   beforeAll(async () => {
-    const mongodb = await MongoMemoryServer.create();
+    const mongodb = MongoMemoryServer.create();
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         MongooseModule.forRoot(
-          process.env.MONGODB_URL ?? mongodb.getUri(),
+          process.env.MONGODB_URL ?? (await mongodb).getUri(),
         ),
         MongooseModule.forFeature([
           {
