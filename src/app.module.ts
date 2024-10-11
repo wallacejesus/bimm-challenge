@@ -23,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     MongooseModule.forRoot(
-      process.env.MONGODB_URL ?? 'mongodb://localhost:27017/bimm-challenge',
+      process.env.MONGODB_URL ?? 'mongodb://mongo:27017/bimm-challenge',
     ),
   ],
   controllers: [AppController],
